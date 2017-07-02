@@ -1,6 +1,21 @@
 
 var ctx;
 
+// (max can be omitted, then between 0-min)
+function getRandomNumber(min, max) {
+  if (typeof max === 'undefined') {
+    max = min;
+    min = 0;
+  }
+  return ( Math.random() * (max - min) ) + min;
+}
+
+// min inclusive, max exclusive
+// (max can be omitted, then between 0-min)
+function getRandomInt(min, max) {
+  return Math.floor( getRandomNumber(min, max) );
+}
+
 function drawTree(x, y) {
   ctx.save();
   // draw base triangle
@@ -21,8 +36,8 @@ function drawTree(x, y) {
   // draw random branches
   for(var i=5; i<40; i+=2) {
     var maxLength = i*0.5+10;
-    var diffX = Math.random()*maxLength;
-    var diffY = Math.random()*maxLength;
+    var diffX = getRandomNumber(maxLength);
+    var diffY = getRandomNumber(maxLength);
     // symmetrical branches
     ctx.moveTo(x+25, y+i);
     ctx.lineTo(x+25+diffX, y+i+diffY-5);
@@ -60,7 +75,7 @@ function drawTreeLine(a, hOffset, vOffset) {
 function draw() {
   var treeLineCount = 25;
   for(var i=0;i<treeLineCount;i++) {
-    drawTreeLine(Math.random()*1.5+0.25, Math.random()*1366, i*17+Math.random()*5);
+    drawTreeLine(getRandomNumber(0.25, 1.75), getRandomInt(1366), i*getRandomInt(17, 22));
   }
 }
 
