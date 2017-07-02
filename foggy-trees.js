@@ -66,10 +66,14 @@ function drawTreeLine(a, hOffset, vOffset) {
 
   var entryCount = 100;
   var xStep = 30;
-  var leftOffset = getRandomInt(25, 50); // offset so trees always start off-screen
+  var leftOffset = getRandomInt(75, 100); // offset so trees always start off-screen
+  var previousX = -leftOffset;
   _.range(entryCount).forEach(function(i){
     var treeYPosition = Math.pow(a*(i-hOffset/xStep), 2) + vOffset;
-    drawTree(i*xStep-leftOffset, treeYPosition);
+    var xVariance = getRandomInt(-15, 3);
+    var currentX = previousX + xStep + xVariance;
+    drawTree(currentX, treeYPosition);
+    previousX = currentX;
   });
 }
 
