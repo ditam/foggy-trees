@@ -48,11 +48,10 @@ function drawTree(x, y) {
     // symmetrical branches
     ctx.moveTo(x+CONSTANTS.TREE_WIDTH/2, y+i);
     ctx.lineTo(x+CONSTANTS.TREE_WIDTH/2+diffX, y+i+diffY-5);
-    ctx.stroke();
     ctx.moveTo(x+CONSTANTS.TREE_WIDTH/2, y+i);
     ctx.lineTo(x+CONSTANTS.TREE_WIDTH/2-diffX, y+i+diffY-5);
-    ctx.stroke();
   }
+  ctx.stroke();
   ctx.restore();
 }
 
@@ -67,9 +66,6 @@ function addFogLayer() {
 // draw a line of trees along the parabola y=-a*(x-hOffset)^2 + vOffset
 function drawTreeLine(a, hOffset, vOffset) {
   addFogLayer();
-  var color = 'rgb(20, 80, 20)';
-  ctx.fillStyle = color;
-  ctx.strokeStyle = color;
 
   // TODO: this doesn't need a parameter, it should be calculated to always fill the screen width
   var entryCount = 100;
@@ -93,6 +89,11 @@ function draw() {
 
 document.addEventListener('DOMContentLoaded', function(event) {
   ctx = document.getElementById('main-canvas').getContext('2d');
+  var color = 'rgb(20, 80, 20)';
+  ctx.fillStyle = color;
+  ctx.strokeStyle = color;
   ctx.lineWidth = 4;
+  console.time('drawing');
   draw();
+  console.timeEnd('drawing');
 });
