@@ -47,9 +47,9 @@ function drawTree(x, y) {
     var diffY = getRandomNumber(maxLength);
     // symmetrical branches
     ctx.moveTo(x+CONSTANTS.TREE_WIDTH/2, y+i);
-    ctx.lineTo(x+CONSTANTS.TREE_WIDTH/2+diffX, y+i+diffY-5);
+    ctx.lineTo(x+CONSTANTS.TREE_WIDTH/2+diffX, y+i+diffY);
     ctx.moveTo(x+CONSTANTS.TREE_WIDTH/2, y+i);
-    ctx.lineTo(x+CONSTANTS.TREE_WIDTH/2-diffX, y+i+diffY-5);
+    ctx.lineTo(x+CONSTANTS.TREE_WIDTH/2-diffX, y+i+diffY);
   }
   ctx.stroke();
   ctx.restore();
@@ -67,7 +67,7 @@ function addFogLayer() {
     for (var y = 0; y < canvas.height; y++) {
       // All noise functions return values in the range of -1 to 1.
       // Having a bias towards the Y coordinate makes the pattern horizontally stretched, which looks like horizontal clouds
-      var value = (noise.perlin2(x/300, y/50) + 1)/2 * 255 * CONSTANTS.FOG_STRENGTH; // number between [0,255]
+      var value = (noise.perlin2(x/300, y/75) + 1)/2 * 255 * CONSTANTS.FOG_STRENGTH; // number between [0,255]
       var cell = (x + y * canvas.width) * 4;
       data[cell] = data[cell + 1] = data[cell + 2] = 255;
       data[cell + 3] = value; // alpha
@@ -97,7 +97,7 @@ function drawTreeLine(a, hOffset, vOffset) {
 
 function draw() {
   for(var i=0;i<CONSTANTS.TREES_IN_LINE;i++) {
-    drawTreeLine(getRandomNumber(0.25, 1.5), getRandomInt(1366), i*getRandomInt(17, 22));
+    drawTreeLine(getRandomNumber(0.25, 1.25), getRandomInt(2732), i*getRandomInt(17, 22));
   }
 }
 
