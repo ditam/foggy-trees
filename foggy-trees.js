@@ -1,8 +1,8 @@
 
-var ctx;
+var canvas, ctx, tempCanvas;
 
 var CONSTANTS = Object.freeze({
-  FOG_OPACITY: 0.04,
+  FOG_STRENGTH: 0.12, // between 0-1
   TREES_IN_LINE: 30,
   TREE_WIDTH: 50
 });
@@ -55,18 +55,30 @@ function drawTree(x, y) {
   ctx.restore();
 }
 
+// A layer of fog clouds is added based on a Perlin-noise function
+// We could figure out a blending algorithm, but instead we just draw the noise image on an other canvas object,
+// then draw it as an image on our original canvas.
 function addFogLayer() {
-  ctx.save();
-  // TODO: use dynamic window size (also in initial size of canvas)
-  ctx.fillStyle = 'rgba(255, 255, 255, '+ CONSTANTS.FOG_OPACITY +')';
-  ctx.fillRect(0, 0, 1366, 768);
-  ctx.restore();
+  noise.seed(Math.random());
+  var tempCtx = tempCanvas.getContext('2d');
+  var image = tempCtx.createImageData(canvas.width, canvas.height);
+  var data = image.data;
+  for (var x = 0; x < canvas.width; x++) {
+    for (var y = 0; y < canvas.height; y++) {
+      // All noise functions return values in the range of -1 to 1.
+      // Having a bias towards the Y coordinate makes the pattern horizontally stretched, which looks like horizontal clouds
+      var value = (noise.perlin2(x/300, y/50) + 1)/2 * 255 * CONSTANTS.FOG_STRENGTH; // number between [0,255]
+      var cell = (x + y * canvas.width) * 4;
+      data[cell] = data[cell + 1] = data[cell + 2] = 255;
+      data[cell + 3] = value; // alpha
+    }
+  }
+  tempCtx.putImageData(image, 0, 0);
+  ctx.drawImage(tempCanvas,0,0);
 }
 
 // draw a line of trees along the parabola y=-a*(x-hOffset)^2 + vOffset
 function drawTreeLine(a, hOffset, vOffset) {
-  addFogLayer();
-
   // TODO: this doesn't need a parameter, it should be calculated to always fill the screen width
   var entryCount = 100;
   var xStep = 30;
@@ -79,6 +91,8 @@ function drawTreeLine(a, hOffset, vOffset) {
     drawTree(currentX, treeYPosition);
     previousX = currentX;
   });
+
+  addFogLayer();
 }
 
 function draw() {
@@ -88,11 +102,17 @@ function draw() {
 }
 
 document.addEventListener('DOMContentLoaded', function(event) {
-  ctx = document.getElementById('main-canvas').getContext('2d');
+  canvas = document.getElementById('main-canvas');
+  tempCanvas=document.createElement('canvas');
+  tempCanvas.width=canvas.width;
+  tempCanvas.height=canvas.height;
+  ctx = canvas.getContext('2d');
+
   var color = 'rgb(20, 80, 20)';
   ctx.fillStyle = color;
   ctx.strokeStyle = color;
   ctx.lineWidth = 4;
+
   console.time('drawing');
   draw();
   console.timeEnd('drawing');
